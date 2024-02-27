@@ -1,0 +1,3 @@
+[submodule "adapters"]
+	path = adapters
+	url = git@github.com:adapter-hub/adapters.git
