@@ -17,6 +17,12 @@ This project builds upon recent advancements in language model adaptation, parti
 
 4. **Empirical Evaluation:** Conduct empirical evaluations on language-specific tasks to analyze the effects of structured common sense knowledge on the performance of LRLs, providing insights into the potential advantages of adapting mLLMs for low-resource scenarios.
 
+**Dataset Information:**
+The datasets used to train language adapters can be found in [this HuggingFace repository](https://huggingface.co/datasets/DGurgurov/language_adapters_data).
+
+**Pre-trained Models // Language Adapters // Misc Models:**
+Explore pre-trained language adapters models for low-resource languages in [this HuggingFace repository](https://huggingface.co/datasets/DGurgurov/language_adapters).
+
 **How to Use:**
 - The repository contains code for injecting knowledge, training language adapters, and evaluating performance on downstream tasks. Refer to the documentation and code comments for detailed instructions. To be extended.
 
