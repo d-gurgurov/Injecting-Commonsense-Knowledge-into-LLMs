@@ -107,7 +107,6 @@ def main():
     test_dataset = preprocess_dataset(test_dataset)
 
     # pre-trained mlm language adapter
-    adapter_config = os.path.basename(args.adapter_config)
     lang_adapter_config = AdapterConfig.load(args.adapter_config)
     model.load_adapter(args.adapter_dir, config=lang_adapter_config, load_as="lang_adapter", with_head=False)
 
@@ -136,6 +135,7 @@ def main():
         overwrite_output_dir=True,
         save_total_limit=1,
         load_best_model_at_end=True,
+        save_only_model=True,
     )
 
     f1_metric = evaluate.load("f1")

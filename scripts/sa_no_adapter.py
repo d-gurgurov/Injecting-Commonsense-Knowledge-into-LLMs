@@ -97,8 +97,6 @@ def main():
 
     config = AutoConfig.from_pretrained(args.model_name)
     model = BertForSequenceClassification(config=config)
-    model.config.hidden_dropout_prob = 0.5
-    model.config.attention_probs_dropout_prob = 0.5
 
     print(model.config)
     training_args = TrainingArguments(
@@ -112,6 +110,7 @@ def main():
         output_dir=args.output_dir,
         overwrite_output_dir=True,
         load_best_model_at_end=True,
+        save_total_limit=1,
     )
     
     f1_metric = evaluate.load("f1")

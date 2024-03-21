@@ -126,6 +126,7 @@ def main():
         output_dir=args.output_dir,
         overwrite_output_dir=True,
         load_best_model_at_end=True,
+        save_only_model=True,
     )
 
     f1_metric = evaluate.load("f1")

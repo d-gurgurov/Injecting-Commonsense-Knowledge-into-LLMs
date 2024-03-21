@@ -84,11 +84,11 @@ def main():
         per_device_eval_batch_size=args.per_device_eval_batch_size,
         save_strategy=args.save_strategy,
         evaluation_strategy=args.evaluation_strategy,
-        save_steps=args.save_steps,
         weight_decay=args.weight_decay,
         load_best_model_at_end=True,
         output_dir=args.output_dir,
         overwrite_output_dir=True,
+        save_only_model=True,
     )
 
     f1_metric = evaluate.load("f1")
@@ -128,7 +128,7 @@ def parse_arguments():
     parser.add_argument("--per_device_train_batch_size", type=int, default=64, help="Batch size per device during training")
     parser.add_argument("--per_device_eval_batch_size", type=int, default=64, help="Batch size per device during evaluation")
     parser.add_argument("--evaluation_strategy", type=str, default="epoch", help="Evaluation strategy during training")
-    parser.add_argument("--save_strategy", type=str, default="no", help="Saving strategy during training")
+    parser.add_argument("--save_strategy", type=str, default="epoch", help="Saving strategy during training")
     parser.add_argument("--weight_decay", type=float, default=0.01, help="Weight decay for optimization")
     parser.add_argument("--language", type=str, default='', help="Language at hand")
     return parser.parse_args()

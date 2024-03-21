@@ -40,10 +40,8 @@ def main():
     parser.add_argument("--num_train_epochs", type=int, default=30, help="Number of training epochs")
     parser.add_argument("--per_device_train_batch_size", type=int, default=64, help="Batch size per device during training")
     parser.add_argument("--per_device_eval_batch_size", type=int, default=64, help="Batch size per device during evaluation")
-    # parser.add_argument("--logging_steps", type=int, default=50, help="Logging frequency during training")
     parser.add_argument("--evaluation_strategy", type=str, default="epoch", help="Evaluation strategy during training")
-    parser.add_argument("--save_strategy", type=str, default="epoch", help="Saving strategy during training")
-    # parser.add_argument("--save_steps", type=int, default=100, help="Saving frequency during training")
+    parser.add_argument("--save_strategy", type=str, default="no", help="Saving strategy during training")
     parser.add_argument("--weight_decay", type=float, default=0.01, help="Weight decay for optimization")
     parser.add_argument("--language", type=str, help='Language for fine-tuning')
     args = parser.parse_args()
@@ -90,7 +88,6 @@ def main():
 
     # Tokenize and adjust labels
     tokenized_dataset = dataset.map(tokenize_adjust_labels, batched=True)
-    print(tokenized_dataset['train'][0])
 
     # Model
     model = AutoModelForTokenClassification.from_pretrained("bert-base-multilingual-cased", num_labels=len(label_names))
@@ -102,7 +99,6 @@ def main():
         num_train_epochs=args.num_train_epochs,
         per_device_train_batch_size=args.per_device_train_batch_size,
         per_device_eval_batch_size=args.per_device_eval_batch_size,
-        logging_dir=args.logging_dir,
         save_strategy=args.save_strategy,
         evaluation_strategy=args.evaluation_strategy,
         weight_decay=args.weight_decay,

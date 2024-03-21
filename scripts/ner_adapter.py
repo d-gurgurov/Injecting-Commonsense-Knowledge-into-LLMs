@@ -112,7 +112,6 @@ def main():
         num_train_epochs=args.num_train_epochs,
         per_device_train_batch_size=args.per_device_train_batch_size,
         per_device_eval_batch_size=args.per_device_eval_batch_size,
-        logging_dir=args.logging_dir,
         save_strategy=args.save_strategy,
         evaluation_strategy=args.evaluation_strategy,
         weight_decay=args.weight_decay,
@@ -120,6 +119,7 @@ def main():
         overwrite_output_dir=True,
         save_total_limit=1,
         load_best_model_at_end=True,
+        save_only_model=True,
     )
 
     # Trainer
