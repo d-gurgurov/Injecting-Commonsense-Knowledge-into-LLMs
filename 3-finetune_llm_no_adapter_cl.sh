@@ -10,7 +10,7 @@ for lang in "${languages[@]}"; do
         output_dir="/netscratch/dgurgurov/inject_commonsense/$TASK_NAME/models/$lang/$i/"
         echo "Iteration: $i, Output Directory: $output_dir"
 
-        python scripts/sa_finetune_mbert.py \
+        python scripts/sa_no_adapter.py \
             --output_dir "$output_dir" \
             --model_name bert-base-multilingual-cased \
             --learning_rate 2e-5 \

@@ -11,7 +11,7 @@ for LANGUAGE in "${LANGUAGES[@]}"; do
         OUTPUT_DIR="/netscratch/dgurgurov/inject_commonsense/$TASK_NAME/models/$LANGUAGE/$i"
 
         echo "Training iteration $i for language: $LANGUAGE"
-        python scripts/mbert_ner_adapter.py \
+        python scripts/ner_adapter.py \
             --output_dir $OUTPUT_DIR \
             --model_name "bert-base-multilingual-cased" \
             --learning_rate 2e-4 \

@@ -21,7 +21,7 @@ for source in "${adapter_sources[@]}"; do
             
             echo "Iteration: $i, Output Directory: $output_dir"
             
-            python scripts/sa_finetune_llm.py \
+            python scripts/sa_stack.py \
                 --output_dir "$output_dir" \
                 --adapter_dir "$adapter_dir" \
                 --adapter_config "$adapter_config" \

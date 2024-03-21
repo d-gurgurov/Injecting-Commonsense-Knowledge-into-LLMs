@@ -12,7 +12,7 @@ for SOURCE in "cn" "wiki"; do
             ADAPTER_CONFIG="./lang_adapters/$SOURCE/$LANGUAGE/adapter_config.json"
 
             echo "Training iteration $i for language: $LANGUAGE, source: $SOURCE"
-            python scripts/mbert_ner_adapter.py \
+            python scripts/ner_stack_adapter.py \
                 --output_dir $OUTPUT_DIR \
                 --model_name "bert-base-multilingual-cased" \
                 --adapter_dir $ADAPTER_DIR \

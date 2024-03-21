@@ -14,7 +14,7 @@ for LANGUAGE in "${LANGUAGES[@]}"; do
         ADAPTER_WIKI_CONFIG="./lang_adapters/wiki/$LANGUAGE/adapter_config.json"
 
         echo "Training iteration $i for language: $LANGUAGE"
-        python scripts/mbert_ner_fusion.py \
+        python scripts/ner_fusion.py \
             --output_dir $OUTPUT_DIR \
             --model_name "bert-base-multilingual-cased" \
             --adapter_cn_dir $ADAPTER_CN_DIR/$LANGUAGE \
