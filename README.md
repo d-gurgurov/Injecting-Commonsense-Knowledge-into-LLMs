@@ -1,5 +1,4 @@
-# Injecting Common-Sense Knowledge into multilingual LLMs for facilitating 
-LRLs via Adapters
+# Injecting Common-Sense Knowledge into multilingual LLMs for facilitating LRLs via Adapters
 
 **Project Overview:**
 
