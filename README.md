@@ -1,4 +1,5 @@
-# Injecting Commonsense Knowledge into Multilingual Large Language Models
+# Injecting Common-Sense Knowledge into multilingual LLMs for facilitating 
+LRLs via Adapters
 
 **Project Overview:**
 
