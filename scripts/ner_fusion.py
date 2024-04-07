@@ -1,3 +1,4 @@
+# import dependencies
 import argparse
 import numpy as np
 import json
@@ -9,7 +10,7 @@ from adapters import AdapterConfig
 from adapters import AdapterTrainer
 from adapters.composition import Stack
 
-# Function to compute metrics
+# useful functions
 def compute_metrics(p, label_names):
     predictions, labels = p
     predictions = np.argmax(predictions, axis=2)
@@ -34,7 +35,6 @@ def compute_metrics(p, label_names):
             flattened_results[k+"_f1"] = results[k]["f1"]
     return flattened_results
 
-# Main function
 def main():
     parser = argparse.ArgumentParser(description="Fine-tune a model for a sentiment analysis task.")
     parser.add_argument("--output_dir", type=str, default="./training_output", help="Output directory for training results")
@@ -54,14 +54,12 @@ def main():
     parser.add_argument("--language", type=str, help='Language for fine-tuning')
     args = parser.parse_args()
 
-    # Function to tokenize and adjust labels
     def tokenize_adjust_labels(all_samples_per_split):
         tokenized_samples = tokenizer.batch_encode_plus(all_samples_per_split["tokens"], is_split_into_words=True)
-        #tokenized_samples is not a datasets object so this alone won't work with Trainer API, hence map is used 
-        #so the new keys [input_ids, labels (after adjustment)]
-        #can be added to the datasets dict for each train test validation split
+        # tokenized_samples is not a datasets object so this alone won't work with Trainer API, hence map is used 
+        # so the new keys [input_ids, labels (after adjustment)]
+        # can be added to the datasets dict for each train test validation split
         total_adjusted_labels = []
-        print(len(tokenized_samples["input_ids"]))
         for k in range(0, len(tokenized_samples["input_ids"])):
             prev_wid = -1
             word_ids_list = tokenized_samples.word_ids(batch_index=k)
@@ -82,50 +80,43 @@ def main():
                 
             total_adjusted_labels.append(adjusted_label_ids)
         tokenized_samples["labels"] = total_adjusted_labels
-        # Convert each element of the labels list to integers
         tokenized_samples["labels"] = [list(map(int, x)) for x in tokenized_samples["labels"]]
 
         return tokenized_samples
 
-    # Load dataset
+    # prepare data
     dataset = load_dataset("wikiann", str(args.language))
     label_names = dataset["train"].features["ner_tags"].feature.names
 
-    # Tokenizer
     tokenizer = AutoTokenizer.from_pretrained(args.model_name)
-    # Tokenize and adjust labels
     tokenized_dataset = dataset.map(tokenize_adjust_labels, batched=True)
 
-    # Model
+    # prepare model
     config = AutoConfig.from_pretrained(args.model_name)
     model = AutoAdapterModel.from_pretrained(args.model_name, config=config)
     
-    # Pre-trained mlm language adapter
+    # load language adapters
     lang_adapter_cn = AdapterConfig.load(args.adapter_cn_config)
     model.load_adapter(args.adapter_cn_dir, config=lang_adapter_cn, load_as="cn", with_head=False)
 
     lang_adapter_wiki = AdapterConfig.load(args.adapter_wiki_config)
     model.load_adapter(args.adapter_wiki_dir, config=lang_adapter_wiki, load_as="wiki", with_head=False)
 
-    # Activating adapter fusion
-    model.add_adapter_fusion(Fuse('cn', 'wiki'))
-    model.set_active_adapters(Fuse('cn', 'wiki'))
-
-    # A new down-stream task adapter
+    # add task adapter
     model.add_adapter("ner")
     model.add_tagging_head("ner", num_labels=len(label_names))
+    model.config.prediction_heads['ner']['dropout_prob'] = 0.2
     model.train_adapter("ner")
 
-    # specify which adapter to train
+    # set up adapter fusion
+    model.add_adapter_fusion(Fuse('cn', 'wiki'))
+    model.set_active_adapters(Fuse('cn', 'wiki'))
+    
     adapter_setup = Fuse('cn', 'wiki')
     model.train_adapter_fusion(adapter_setup)
 
-    # New dropout rate
-    model.config.prediction_heads['ner']['dropout_prob'] = 0.2
-
     print(model.adapter_summary())
 
-    # Training arguments
     training_args = TrainingArguments(
         learning_rate=args.learning_rate,
         num_train_epochs=args.num_train_epochs,
@@ -141,7 +132,6 @@ def main():
         save_only_model=True,
     )
 
-    # Trainer
     trainer = AdapterTrainer(
         model=model,
         args=training_args,
@@ -152,14 +142,11 @@ def main():
         compute_metrics=lambda p: compute_metrics(p, label_names)
     )
 
-    # Start training
+    # train model
     trainer.train()
-    print("---- Training is done! ----")
 
-    # Compute test metrics
+    # test model
     test_results = trainer.evaluate(tokenized_dataset["test"])
-
-    # Write test metrics to JSON file
     output_file_path = os.path.join(args.output_dir, "test_metrics.json")
     with open(output_file_path, "w") as f:
         json.dump(test_results, f)

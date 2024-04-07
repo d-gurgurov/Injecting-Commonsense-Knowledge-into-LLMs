@@ -95,6 +95,7 @@ def main():
     # prepare model
     config = AutoConfig.from_pretrained(args.model_name)
     model = BertForSequenceClassification(config=config)
+    model.config.hidden_dropout_prob=0.5
 
     training_args = TrainingArguments(
         learning_rate=args.learning_rate,

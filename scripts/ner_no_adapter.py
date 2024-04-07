@@ -1,3 +1,4 @@
+# imoprt dependencies
 import argparse
 import numpy as np
 import json
@@ -5,7 +6,7 @@ import os
 from datasets import load_dataset, load_metric
 from transformers import AutoTokenizer, AutoModelForTokenClassification, TrainingArguments, Trainer, DataCollatorForTokenClassification
 
-# Function to compute metrics
+# useful functions
 def compute_metrics(p, label_names):
     predictions, labels = p
     predictions = np.argmax(predictions, axis=2)
@@ -30,14 +31,13 @@ def compute_metrics(p, label_names):
             flattened_results[k+"_f1"] = results[k]["f1"]
     return flattened_results
 
-# Main function
 def main():
     parser = argparse.ArgumentParser(description="Fine-tune a model for a sentiment analysis task.")
     parser.add_argument("--output_dir", type=str, default="./training_output", help="Output directory for training results")
     parser.add_argument("--logging_dir", type=str, default="./models/logs", help="Output directory for log results")
     parser.add_argument("--model_name", type=str, default="bert-base-multilingual-cased", help="Name of the pre-trained model")
     parser.add_argument("--learning_rate", type=float, default=1e-4, help="Learning rate for training")
-    parser.add_argument("--num_train_epochs", type=int, default=30, help="Number of training epochs")
+    parser.add_argument("--num_train_epochs", type=int, default=100, help="Number of training epochs")
     parser.add_argument("--per_device_train_batch_size", type=int, default=64, help="Batch size per device during training")
     parser.add_argument("--per_device_eval_batch_size", type=int, default=64, help="Batch size per device during evaluation")
     parser.add_argument("--evaluation_strategy", type=str, default="epoch", help="Evaluation strategy during training")
@@ -46,7 +46,6 @@ def main():
     parser.add_argument("--language", type=str, help='Language for fine-tuning')
     args = parser.parse_args()
 
-    # Function to tokenize and adjust labels
     def tokenize_adjust_labels(all_samples_per_split):
         tokenized_samples = tokenizer.batch_encode_plus(all_samples_per_split["tokens"], is_split_into_words=True)
         #tokenized_samples is not a datasets object so this alone won't work with Trainer API, hence map is used 
@@ -74,26 +73,21 @@ def main():
                 
             total_adjusted_labels.append(adjusted_label_ids)
         tokenized_samples["labels"] = total_adjusted_labels
-        # Convert each element of the labels list to integers
         tokenized_samples["labels"] = [list(map(int, x)) for x in tokenized_samples["labels"]]
 
         return tokenized_samples
 
-    # Load dataset
+    # prepare data
     dataset = load_dataset("wikiann", args.language)
     label_names = dataset["train"].features["ner_tags"].feature.names
 
-    # Tokenizer
     tokenizer = AutoTokenizer.from_pretrained(args.model_name)
-
-    # Tokenize and adjust labels
     tokenized_dataset = dataset.map(tokenize_adjust_labels, batched=True)
 
-    # Model
+    # prepare model
     model = AutoModelForTokenClassification.from_pretrained("bert-base-multilingual-cased", num_labels=len(label_names))
     model.config.hidden_dropout_prob=0.2
 
-    # Training arguments
     training_args = TrainingArguments(
         learning_rate=args.learning_rate,
         num_train_epochs=args.num_train_epochs,
@@ -108,7 +102,6 @@ def main():
         load_best_model_at_end=True,
     )
 
-    # Trainer
     trainer = Trainer(
         model=model,
         args=training_args,
@@ -119,13 +112,11 @@ def main():
         compute_metrics=lambda p: compute_metrics(p, label_names)
     )
 
-    # Start training
+    # train model
     trainer.train()
 
-    # Compute test metrics
+    # test model
     test_results = trainer.evaluate(eval_dataset=tokenized_dataset["test"])
-
-    # Write test metrics to JSON file
     output_file_path = os.path.join(args.output_dir, "test_metrics.json")
     with open(output_file_path, "w") as f:
         json.dump(test_results, f)
