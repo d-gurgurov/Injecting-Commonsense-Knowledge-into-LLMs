@@ -4,9 +4,9 @@ pip install adapters
 
 TASK_NAME="stack_sa"
 
-languages=("Maltese" "Indonesian" "Bulgarian")
+languages=("Bulgarian")
 
-adapter_sources=("wiki" "cn")
+adapter_sources=("wiki")
 
 for source in "${adapter_sources[@]}"; do
     echo "Using adapter source: $source"
@@ -28,8 +28,8 @@ for source in "${adapter_sources[@]}"; do
                 --model_name bert-base-multilingual-cased \
                 --learning_rate 1e-4 \
                 --num_train_epochs 50 \
-                --per_device_train_batch_size 64 \
-                --per_device_eval_batch_size 64 \
+                --per_device_train_batch_size 32 \
+                --per_device_eval_batch_size 32 \
                 --evaluation_strategy epoch \
                 --save_strategy epoch \
                 --language "$lang"

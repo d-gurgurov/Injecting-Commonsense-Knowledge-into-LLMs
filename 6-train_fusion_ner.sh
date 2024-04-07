@@ -1,7 +1,7 @@
 #!/bin/bash
 
 TASK_NAME="fusion_ner"
-LANGUAGES=("mt" "ms" "bg")
+LANGUAGES=("bg")
 ADAPTER_CN_DIR="./lang_adapters/cn"
 ADAPTER_WIKI_DIR="./lang_adapters/wiki"
 
@@ -9,7 +9,7 @@ pip install seqeval adapters
 
 for LANGUAGE in "${LANGUAGES[@]}"; do
     for i in {1..3}; do
-        OUTPUT_DIR="/netscratch/dgurgurov/inject_commonsense/$TASK_NAME/models/$LANGUAGE/$i"
+        OUTPUT_DIR="/netscratch/dgurgurov/inject_commonsense/fullwordmasking/$TASK_NAME/models/$LANGUAGE/$i"
         ADAPTER_CN_CONFIG="./lang_adapters/cn/$LANGUAGE/adapter_config.json"
         ADAPTER_WIKI_CONFIG="./lang_adapters/wiki/$LANGUAGE/adapter_config.json"
 

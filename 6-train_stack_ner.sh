@@ -2,12 +2,13 @@
 
 pip install seqeval adapters
 
-TASK_NAME="ner_stack_adapter"
+TASK_NAME="stack_adapter_ner"
+# "wiki"
 
-for SOURCE in "cn" "wiki"; do
+for SOURCE in "cn"; do
     for LANGUAGE in "mt" "ms" "bg"; do
         for i in {1..3}; do
-            OUTPUT_DIR="/netscratch/dgurgurov/inject_commonsense/$TASK_NAME/$SOURCE/models/$LANGUAGE/$i"
+            OUTPUT_DIR="/netscratch/dgurgurov/inject_commonsense/fullwordmasking/$TASK_NAME/$SOURCE/models/$LANGUAGE/$i"
             ADAPTER_DIR="./lang_adapters/$SOURCE/$LANGUAGE"
             ADAPTER_CONFIG="./lang_adapters/$SOURCE/$LANGUAGE/adapter_config.json"
 
