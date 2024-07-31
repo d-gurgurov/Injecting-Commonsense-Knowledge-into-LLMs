@@ -21,7 +21,9 @@ This paper explores the integration of graph knowledge from linguistic ontologie
 
 One of the Wiki or ConceptNet language adapters is used during inference. The outputs then go to a task adapter, which is followed by a classification head. If fusion is specified, the fusion mechanism is activated.
 
-<img src="https://github.com/d-gurgurov/Injecting-Commonsense-Knowledge-into-LLMs/blob/main/assets/kallm.png?raw=true" alt="architecture" width="500"/>
+<div align="center">
+    <img src="https://github.com/d-gurgurov/Injecting-Commonsense-Knowledge-into-LLMs/blob/main/assets/kallm.png?raw=true" alt="architecture" width="400"/>
+</div>
 
 **Dataset Information:**
 The datasets used to train language adapters and task adapters can be found on [HuggingFace](https://huggingface.co/datasets/DGurgurov).
